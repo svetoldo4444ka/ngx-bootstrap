@@ -261,6 +261,9 @@ export function positionElements(
     placement,
     appendToBody
   );
+  if(targetElement.getBoundingClientRect().left < 0 && placement !== 'left' ) {
+    pos.left += -(targetElement.getBoundingClientRect().left);
+  }
 
   targetElement.style.top = `${pos.top}px`;
   targetElement.style.left = `${pos.left}px`;
