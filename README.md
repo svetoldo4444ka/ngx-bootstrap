@@ -95,6 +95,8 @@ First time
  To run bootstrap 3 and 4 demo:
  - `npm run demo.serve` to serve local demo. This is for testing only, without watchers.
 
+To update your fork and prepare it for local usage:
+
 ```bash
 git pull upstream development
 rm -rf node_modules
