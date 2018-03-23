@@ -6,7 +6,7 @@ import {
   TemplateRef,
   ViewChild,
   ViewChildren,
-  Renderer2
+  Renderer2, HostBinding, Input, EventEmitter, Output, OnChanges
 } from '@angular/core';
 
 import { isBs3, Utils } from '../utils';
@@ -40,6 +40,7 @@ export class TypeaheadContainerComponent {
   dropup: boolean;
   guiHeight: string;
   needScrollbar: boolean;
+  activeChild: string;
 
   get isBs4(): boolean {
     return !isBs3();
@@ -101,6 +102,7 @@ export class TypeaheadContainerComponent {
   }
 
   selectActiveMatch(): void {
+    console.log('selectActiveMatch');
     this.selectMatch(this._active);
   }
 
@@ -130,12 +132,29 @@ export class TypeaheadContainerComponent {
     }
   }
 
-  selectActive(value: TypeaheadMatch): void {
-    this.isFocused = true;
-    this._active = value;
+
+
+
+
+  getId(i: number, value: TypeaheadMatch) {
+    // let activeItem = this.selectActive(value);
+    // console.log(activeItem);
+
+    this.activeChild = `TypeaheadItem-${i}`;
+    value.idItem = this.activeChild;
+    return this.activeChild;
   }
 
+  selectActive(value: TypeaheadMatch): void {
+    console.log('selectActive');
+    this.isFocused = true;
+    this._active = value;
+    this.renderer.setAttribute(this.parent._container.element.nativeElement.previousElementSibling, 'aria-activedescendant', this._active.idItem);
+  }
+
+
   hightlight(match: TypeaheadMatch, query: any): string {
+
     let itemStr: string = match.value;
     let itemStrHelper: string = (this.parent && this.parent.typeaheadLatinize
       ? latinize(itemStr)
@@ -168,9 +187,51 @@ export class TypeaheadContainerComponent {
           `${itemStr.substring(startIdx + tokenLen)}`;
       }
     }
-
     return itemStr;
   }
+  @HostBinding('attr.aria-labelledby') ariaLabelledby: string;
+  get addariaLabelledby() {
+    if (!isBs3()) {
+      return this.ariaLabelledby;
+    }
+
+    return false;
+  }
+  @HostBinding('attr.id') idLIst: string;
+  get addariaControls() {
+    if (!isBs3()) {
+      return this.idLIst;
+    }
+
+    return false;
+  }
+  @HostBinding('attr.role') roleLIst = 'listbox';
+  get addRoleAttribute() {
+    if (!isBs3()) {
+      return this.roleLIst;
+    }
+
+    return false;
+  }
+  @HostBinding('attr.role') roleItemLIst = 'option';
+  get addRoleItemAttribute() {
+    if (!isBs3()) {
+      return this.roleItemLIst;
+    }
+
+    return false;
+  }
+
+  // @HostBinding('attr.id') idItemLIst = 'TypeaheadItem';
+  // get addIdItem() {
+  //   console.log('this', this);
+  //   if (!isBs3()) {
+  //     return this.idItemLIst;
+  //   }
+  //
+  //   return false;
+  // }
+
 
   @HostListener('mouseleave')
   @HostListener('blur')
@@ -182,11 +243,14 @@ export class TypeaheadContainerComponent {
     return this._active === value;
   }
 
+
   selectMatch(value: TypeaheadMatch, e: Event = void 0): boolean {
+    console.log('selectMatch');
     if (e) {
       e.stopPropagation();
       e.preventDefault();
     }
+
     this.parent.changeModel(value);
     setTimeout(() => this.parent.typeaheadOnSelect.emit(value), 0);
 

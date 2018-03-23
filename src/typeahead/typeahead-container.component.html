@@ -11,10 +11,13 @@
   <ul class="dropdown-menu"
       #ulElement
       [style.overflow-y]="needScrollbar ? 'scroll': 'auto'"
+      [attr.aria-labelledby]="ariaLabelledby"
+      [attr.role]="roleLIst"
+      [attr.id]="ariaControls"
       [style.height]="needScrollbar ? guiHeight: 'auto'">
     <ng-template ngFor let-match let-i="index" [ngForOf]="matches">
-      <li #liElements *ngIf="match.isHeader()" class="dropdown-header">{{ match }}</li>
-      <li #liElements *ngIf="!match.isHeader()" [class.active]="isActive(match)" (mouseenter)="selectActive(match)">
+      <li #liElements *ngIf="match.isHeader()" [attr.id]="" [attr.aria-selected]="isActive(match)" class="dropdown-header">{{ match }}</li>
+      <li #liElements  *ngIf="!match.isHeader()" [attr.id]="getId(i)" [attr.aria-selected]="isActive(match)" [attr.role]="roleItemLIst" [class.active]="isActive(match)" (mouseenter)="selectActive(match)">
         <a href="#" (click)="selectMatch(match, $event)" tabindex="-1">
           <ng-template [ngTemplateOutlet]="itemTemplate || bsItemTemplate"
                        [ngTemplateOutletContext]="{item:match.item, index:i, match:match, query:query}"></ng-template>
@@ -26,14 +29,17 @@
 
 <!-- Bootstrap 4 options list template -->
 <ng-template #bs4Template>
-  <ng-template ngFor let-match let-i="index" [ngForOf]="matches">
+  <ng-template  ngFor let-match let-i="index" [ngForOf]="matches">
     <h6 *ngIf="match.isHeader()" class="dropdown-header">{{ match }}</h6>
     <ng-template [ngIf]="!match.isHeader()">
       <button #liElements
               class="dropdown-item"
               (click)="selectMatch(match, $event)"
               (mouseenter)="selectActive(match)"
-              [class.active]="isActive(match)">
+              [attr.role]="roleItemLIst"
+              [class.active]="isActive(match)"
+              [attr.id]="getId(i, match)"
+              [attr.aria-selected]="isActive(match)">
         <ng-template [ngTemplateOutlet]="itemTemplate || bsItemTemplate"
                      [ngTemplateOutletContext]="{item:match.item, index:i, match:match, query:query}"></ng-template>
       </button>

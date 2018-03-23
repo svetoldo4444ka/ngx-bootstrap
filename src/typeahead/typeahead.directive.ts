@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Directive,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostBinding,
   HostListener,
   Input,
   OnDestroy,
@@ -28,6 +28,8 @@ import { ComponentLoader, ComponentLoaderFactory } from '../component-loader/ind
 import { TypeaheadContainerComponent } from './typeahead-container.component';
 import { TypeaheadMatch } from './typeahead-match.class';
 import { getValueFromObject, latinize, tokenize } from './typeahead-utils';
+
+let id = 0;
 
 @Directive({selector: '[typeahead]', exportAs: 'bs-typeahead'})
 export class TypeaheadDirective implements OnInit, OnDestroy {
@@ -123,8 +125,11 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   /**  if false don't focus the input element the typeahead directive is associated with on selection */
     // @Input() protected typeaheadFocusOnSelect:boolean;
 
+  private typeaheadId = id++;
+  itemMatches: number;
   _container: TypeaheadContainerComponent;
   isTypeaheadOptionsListActive = false;
+  textBox: HTMLElement = this.element.nativeElement;
 
   protected keyUpEventEmitter: EventEmitter<any> = new EventEmitter();
   protected _matches: TypeaheadMatch[];
@@ -172,6 +177,10 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
       this.syncActions();
     }
   }
+
+  @HostBinding('attr.aria-labelledby') ariaLabelledby = `Typeahead-${this.typeaheadId}`;
+  @HostBinding('attr.aria-controls') ariaControls = `TypeaheadControls-${this.typeaheadId}`;
+ // @HostBinding('attr.aria-activedescendant') ariaActiveDescendant: string;
 
   @HostListener('input', ['$event'])
   onInput(e: any): void {
@@ -280,6 +289,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   }
 
   show(): void {
+
     this._typeahead
       .attach(TypeaheadContainerComponent)
       // todo: add append to body, after updating positioning service
@@ -289,9 +299,12 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
         typeaheadRef: this,
         placement: this.placement,
         animation: false,
-        dropup: this.dropup
+        dropup: this.dropup,
+        ariaLabelledby: this.ariaLabelledby,
+        ariaControls: this.ariaControls,
+        ariaExpanded: true
+        //ariaActiveDescendant: this.ariaActiveDescendant
       });
-
     this._outsideClickListener = this.renderer.listen('document', 'click', (e: MouseEvent) => {
       if (this.typeaheadMinLength === 0 && this.element.nativeElement.contains(e.target)) {
         return;
@@ -315,11 +328,15 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
       )
       : normalizedQuery;
     this._container.matches = this._matches;
+
     this.element.nativeElement.focus();
   }
 
   hide(): void {
     if (this._typeahead.isShown) {
+      if(this.textBox.hasAttribute('aria-expanded')) {
+        this.textBox.setAttribute('aria-expanded', 'false');
+      }
       this._typeahead.hide();
       this._outsideClickListener();
       this._container = null;
