@@ -95,9 +95,13 @@ First time
  To run bootstrap 3 and 4 demo:
  - `npm run demo.serve` to serve local demo. This is for testing only, without watchers.
 
- For local development run
- - `npm run build.watch` in first terminal
- - `ng serve` in second
+```bash
+git pull upstream development
+rm -rf node_modules
+npm install
+ # it will build the lib, create a link in node_modules and run package's "test" script
+npm run test
+ ```
 
   If you want to run the demo with Angular Universal:
   - `npm run demo.serve-universal`
