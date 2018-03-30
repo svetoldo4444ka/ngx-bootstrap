@@ -9,6 +9,8 @@ import { DemoPaginationBoundaryLinksComponent } from './demos/boundary-links/bou
 import { DemoPaginationDirectionLinksComponent } from './demos/direction-links/direction-links';
 import { DemoPaginationCustomLinksContentComponent } from './demos/custom-links-content/custom-links-content';
 import { DemoPaginationContentSwitchingComponent } from './demos/content-switching/content-switching';
+import { DemoPaginationAccessibleComponent } from './demos/accessibility/accessibility';
+// import { DemoPagerAccessibleComponent } from './demos/pager-accessible/pager-accessible';
 
 import { ContentSection } from '../../docs/models/content-section.model';
 import { DemoTopSectionComponent } from '../../docs/demo-section-components/demo-top-section/index';
@@ -21,6 +23,7 @@ import {
 } from '../../docs/api-docs';
 import { DemoPaginationDisabledComponent } from './demos/disabled/disabled';
 import { DemoPaginationRotateComponent } from './demos/rotate/rotate';
+
 
 export const demoComponentContent: ContentSection[] = [
   {
@@ -98,7 +101,7 @@ export const demoComponentContent: ContentSection[] = [
         anchor: 'pagination-limit',
         component: require('!!raw-loader?lang=typescript!./demos/limit/limit.ts'),
         html: require('!!raw-loader?lang=markup!./demos/limit/limit.html'),
-        description: `<p>Limit the maximum visible page numbers</p>`,
+        description: `<p>Limit the maximum visible buttons</p>`,
         outlet: DemoPaginationLimitComponent
       },
       {
@@ -123,7 +126,30 @@ export const demoComponentContent: ContentSection[] = [
         component: require('!!raw-loader?lang=typescript!./demos/pager/pager.ts'),
         html: require('!!raw-loader?lang=markup!./demos/pager/pager.html'),
         outlet: DemoPaginationPagerComponent
+      },
+      {
+        title: 'Accessible pagination',
+        anchor: 'pagination-accessible',
+        component: require('!!raw-loader?lang=typescript!./demos/accessibility/accessibility.ts'),
+        html: require('!!raw-loader?lang=markup!./demos/accessibility/accessibility.html'),
+        description: `To change a value of <code>aria-attributes</code>, 
+        you may use values, presented below, in the <code>pagination</code>. Looking to use a symbol in place of text for 
+        some pagination links? Be sure to provide proper screen reader support with <code>accessibleLinks</code> 
+        (for <code>previous/next</code> buttons) and <code>boundaryAccessibleLinks</code> 
+        (for <code>first/last</code> buttons) values for adding accessible structure.`,
+        outlet: DemoPaginationAccessibleComponent
       }
+      // {
+      //   title: 'Accessible pager',
+      //   anchor: 'pagination-pager-accessible',
+      //   component: require('!!raw-loader?lang=typescript!./demos/pager-accessible/pager-accessible.ts'),
+      //   html: require('!!raw-loader?lang=markup!./demos/pager-accessible/pager-accessible.html'),
+      //   description: `To change a value of <code>aria-attributes</code>,
+      //   you may use values, presented below, in the <code>pager</code>. Looking to use a symbol in place of text for
+      //   pager links? Be sure to provide proper screen reader support with <code>accessibleLinks</code>
+      //   (for <code>previous/next</code> buttons) values for adding accessible structure.`,
+      //   outlet: DemoPagerAccessibleComponent
+      // }
       /* TODO: temporary disabled pageBtnClass option
       {
         title: 'Styling',
