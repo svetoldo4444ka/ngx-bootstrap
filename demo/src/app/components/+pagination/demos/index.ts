@@ -11,8 +11,8 @@ import { DemoPaginationCustomLinksContentComponent } from './custom-links-conten
 import { DemoPaginationDisabledComponent } from './disabled/disabled';
 import { DemoPaginationRotateComponent } from './rotate/rotate';
 import { DemoPaginationContentSwitchingComponent } from './content-switching/content-switching';
-import { DemoPaginationAccessibleComponent } from './accessibility/accessibility';
-// import { DemoPagerAccessibleComponent } from './pager-accessible/pager-accessible';
+import { DemoPaginationAccessibleComponent } from './pagination-accessible/pagination-accessible';
+import { DemoPagerAccessibleComponent } from './pager-accessible/pager-accessible';
 
 export const DEMO_COMPONENTS = [
   DemoPaginationBasicComponent,
@@ -28,6 +28,6 @@ export const DEMO_COMPONENTS = [
   DemoPaginationDisabledComponent,
   DemoPaginationRotateComponent,
   DemoPaginationContentSwitchingComponent,
-  DemoPaginationAccessibleComponent
-  // DemoPagerAccessibleComponent
+  DemoPaginationAccessibleComponent,
+  DemoPagerAccessibleComponent
 ];
