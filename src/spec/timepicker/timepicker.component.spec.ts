@@ -981,7 +981,6 @@ describe('Component: TimepickerComponent', () => {
       component.updateHours('99');
 
       expect(methodSpy).toHaveBeenCalledWith(null);
-      /* tslint:disable-next-line: no-any */
       expect(component.isValid.emit).toHaveBeenCalledWith(false);
       expect(component.invalidHours).toEqual(true);
     });
@@ -994,7 +993,6 @@ describe('Component: TimepickerComponent', () => {
       component.updateHours('19');
 
       expect(methodSpy).toHaveBeenCalledWith(null);
-      /* tslint:disable-next-line: no-any */
       expect(component.isValid.emit).toHaveBeenCalledWith(false);
       expect(component.invalidHours).toEqual(true);
     });
@@ -1039,7 +1037,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateMinutes('30');
 
       expect(component.invalidMinutes).toEqual(false);
-      expect(spyOn).toHaveBeenCalled();
+      expect(component._updateTime).toHaveBeenCalled();
     });
 
     it('should clear model if second input is invalid', () => {
@@ -1072,7 +1070,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateSeconds('30');
 
       expect(component.invalidSeconds).toEqual(false);
-      expect(spyOn).toHaveBeenCalled();
+      expect(component._updateTime).toHaveBeenCalled();
     });
 
     it('should valid value in input fields', fakeAsync(() => {
