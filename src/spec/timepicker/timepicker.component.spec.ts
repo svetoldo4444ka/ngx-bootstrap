@@ -1,4 +1,4 @@
-/* tslint:disable:max-classes-per-file no-floating-promises max-file-line-count component-class-suffix */
+// tslint:disable:no-floating-promises max-file-line-count
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -981,6 +981,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateHours('99');
 
       expect(methodSpy).toHaveBeenCalledWith(null);
+      /* tslint:disable-next-line: no-any */
       expect(component.isValid.emit).toHaveBeenCalledWith(false);
       expect(component.invalidHours).toEqual(true);
     });
@@ -993,6 +994,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateHours('19');
 
       expect(methodSpy).toHaveBeenCalledWith(null);
+      /* tslint:disable-next-line: no-any */
       expect(component.isValid.emit).toHaveBeenCalledWith(false);
       expect(component.invalidHours).toEqual(true);
     });
