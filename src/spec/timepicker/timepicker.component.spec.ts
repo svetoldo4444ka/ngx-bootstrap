@@ -1072,7 +1072,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateSeconds('30');
 
       expect(component.invalidSeconds).toEqual(false);
-      expect(component._updateTime).toHaveBeenCalled();
+      expect(spyOn).toHaveBeenCalled();
     });
 
     it('should valid value in input fields', fakeAsync(() => {
