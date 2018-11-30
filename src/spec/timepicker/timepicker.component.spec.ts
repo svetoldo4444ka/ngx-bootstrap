@@ -1,4 +1,5 @@
 // tslint:disable:no-floating-promises max-file-line-count
+/* tslint:disable:no-unbound-method */
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -981,7 +982,9 @@ describe('Component: TimepickerComponent', () => {
       component.updateHours('99');
 
       expect(methodSpy).toHaveBeenCalledWith(null);
+      /* tslint:disable-next-line:no-unbound-method */
       expect(component.isValid.emit).toHaveBeenCalledWith(false);
+      /* tslint:disable-next-line:no-unbound-method */
       expect(component.invalidHours).toEqual(true);
     });
 
@@ -991,9 +994,11 @@ describe('Component: TimepickerComponent', () => {
       spyOn(component, 'isValidLimit').and.returnValue(false);
 
       component.updateHours('19');
-
+      /* tslint:disable-next-line:no-unbound-method */
       expect(methodSpy).toHaveBeenCalledWith(null);
+      /* tslint:disable-next-line:no-unbound-method */
       expect(component.isValid.emit).toHaveBeenCalledWith(false);
+      /* tslint:disable-next-line:no-unbound-method */
       expect(component.invalidHours).toEqual(true);
     });
 
