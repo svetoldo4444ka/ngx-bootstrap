@@ -1,5 +1,6 @@
-// tslint:disable:no-floating-promises max-file-line-count
-// tslint:disable:variable-name no-shadowed-variable
+// tslint:disable:max-line-length max-file-line-count prefer-const forin prefer-template one-variable-per-declaration newline-before-return
+// tslint:disable:binary-expression-operand-order comment-format one-line no-var-keyword object-literal-shorthand
+// tslint:disable:variable-namble
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
