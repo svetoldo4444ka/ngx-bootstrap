@@ -1039,7 +1039,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateMinutes('30');
 
       expect(component.invalidMinutes).toEqual(false);
-      expect(component._updateTime).toHaveBeenCalled();
+      expect(spyOn).toHaveBeenCalled();
     });
 
     it('should clear model if second input is invalid', () => {
@@ -1070,9 +1070,8 @@ describe('Component: TimepickerComponent', () => {
       component.seconds = '10';
 
       component.updateSeconds('30');
-      /* tslint:disable-next-line: no-any*/
+
       expect(component.invalidSeconds).toEqual(false);
-      /* tslint:disable-next-line: no-any*/
       expect(component._updateTime).toHaveBeenCalled();
     });
 
