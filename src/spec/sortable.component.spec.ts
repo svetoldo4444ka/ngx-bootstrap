@@ -100,6 +100,7 @@ xdescribe('Component: Sortable', () => {
       sort1.itemActiveStyle
     );
     // act
+    /* tslint:disable-next-line: no-any*/
     const style = sort1.getItemStyle(true);
     // assert
     expect(style).toEqual(activeItemStyle);
@@ -109,6 +110,7 @@ xdescribe('Component: Sortable', () => {
     // arrange
     const normalItemStyle = Object.assign({}, sort1.itemStyle);
     // act
+    /* tslint:disable-next-line: no-any*/
     const style = sort1.getItemStyle(false);
     // assert
     expect(style).toEqual(normalItemStyle);
