@@ -1070,7 +1070,7 @@ describe('Component: TimepickerComponent', () => {
       component.updateSeconds('30');
 
       expect(component.invalidSeconds).toEqual(false);
-      /* tslint:no-unbound-method */
+      /* tslint:no-unbound-method: false */
       expect(component._updateTime).toHaveBeenCalled();
     });
 
