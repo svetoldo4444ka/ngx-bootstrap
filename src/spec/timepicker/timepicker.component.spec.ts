@@ -1066,7 +1066,7 @@ describe('Component: TimepickerComponent', () => {
     });
 
     it('should update time if second is valid', () => {
-      spyOn(component, '_updateTime').and.stub();
+      spyOn(component, '_updateTime').and.and.callThrough();
       component.seconds = '10';
 
       component.updateSeconds('30');
