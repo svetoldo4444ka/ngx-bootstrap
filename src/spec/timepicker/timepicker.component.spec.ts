@@ -1064,12 +1064,13 @@ describe('Component: TimepickerComponent', () => {
     });
 
     it('should update time if second is valid', () => {
-      spyOn(component, '_updateTime').and.callThrough();
+      spyOn(component, '_updateTime').and.stub();
       component.seconds = '10';
 
       component.updateSeconds('30');
 
       expect(component.invalidSeconds).toEqual(false);
+      /* tslint:no-unbound-method: no-any */
       expect(component._updateTime).toHaveBeenCalled();
     });
 
