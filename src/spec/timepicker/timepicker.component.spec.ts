@@ -1070,8 +1070,9 @@ describe('Component: TimepickerComponent', () => {
       component.seconds = '10';
 
       component.updateSeconds('30');
-
+      /* tslint:disable-next-line: no-any*/
       expect(component.invalidSeconds).toEqual(false);
+      /* tslint:disable-next-line: no-any*/
       expect(component._updateTime).toHaveBeenCalled();
     });
 
