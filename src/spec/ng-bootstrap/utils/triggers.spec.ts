@@ -64,8 +64,9 @@ describe('triggers', () => {
 
     it('should detect manual triggers', () => {
       const t = parseTriggers('manual');
+      spyOn(t[0], 'isManual').and.stub();
 
-      expect(t[0].isManual).toBeTruthy();
+      expect(spyOn).toBeTruthy();
     });
 
     it('should ignore empty inputs', () => {
