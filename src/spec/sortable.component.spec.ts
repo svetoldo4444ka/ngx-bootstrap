@@ -100,7 +100,7 @@ xdescribe('Component: Sortable', () => {
       sort1.itemActiveStyle
     );
     // act
-    /* tslint:no-inferred-empty-object-type: false */
+    /* tslint:no-inferred-empty-object-type: true */
     const style = sort1.getItemStyle(true);
     // assert
     expect(style).toEqual(activeItemStyle);
