@@ -1,4 +1,5 @@
 // tslint:disable:no-floating-promises max-file-line-count
+// tslint:disable:variable-name no-shadowed-variable
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
