@@ -99,7 +99,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   /** fired when option was selected, return object with data of this option */
   @Output() typeaheadOnSelect = new EventEmitter<TypeaheadMatch>();
   /** fired when blur event occurs. returns the active item */
-  // tslint:disable-next-line:no-any
+    // tslint:disable-next-line:no-any
   @Output() typeaheadOnBlur = new EventEmitter<any>();
 
   /**
@@ -203,6 +203,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   onChange(e: KeyboardEvent): void {
     if (this._container) {
       // esc
+      /* tslint:disable-next-line: deprecation */
       if (e.keyCode === 27) {
         this.hide();
 
@@ -210,6 +211,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
       }
 
       // up
+      /* tslint:disable-next-line: deprecation */
       if (e.keyCode === 38) {
         this._container.prevActiveMatch();
 
@@ -217,6 +219,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
       }
 
       // down
+      /* tslint:disable-next-line: deprecation */
       if (e.keyCode === 40) {
         this._container.nextActiveMatch();
 
@@ -224,6 +227,7 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
       }
 
       // enter, tab
+      /* tslint:disable-next-line: deprecation */
       if (e.keyCode === 13) {
         this._container.selectActiveMatch();
 
@@ -256,18 +260,15 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
     }
 
     // if an item is visible - prevent form submission
-<<<<<<< HEAD
-    if (e.keyCode === 13) {
-=======
     /* tslint:disable-next-line: deprecation */
     if (this._container.active && e.keyCode === 13) {
->>>>>>> 84e3eed... fix(typeahead): was restored lost commit
       e.preventDefault();
 
       return;
     }
 
     // if an item is visible - don't change focus
+    /* tslint:disable-next-line: deprecation */
     if (e.keyCode === 9) {
       if (this._container.active || this.typeaheadSelectedFirstItem) {
         e.preventDefault();
