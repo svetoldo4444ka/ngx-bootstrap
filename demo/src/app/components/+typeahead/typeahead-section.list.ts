@@ -15,6 +15,7 @@ import { DemoTypeaheadContainerComponent } from './demos/container/container';
 import { DemoTypeaheadSingleWorldComponent } from './demos/single-world/single-world';
 import { DemoTypeaheadPhraseDelimitersComponent } from './demos/phrase-delimiters/phrase-delimiters';
 import { DemoTypeaheadOnSelectComponent } from './demos/on-select/on-select';
+import { DemoTypeaheadSelectedFirstItemComponent } from './demos/selected-first-item/selected-first-item';
 
 import { ContentSection } from '../../docs/models/content-section.model';
 import { DemoTopSectionComponent } from '../../docs/demo-section-components/demo-top-section';
@@ -195,6 +196,16 @@ export const demoComponentContent: ContentSection[] = [
         component: require('!!raw-loader?lang=typescript!./demos/on-select/on-select.ts'),
         html: require('!!raw-loader?lang=markup!./demos/on-select/on-select.html'),
         outlet: DemoTypeaheadOnSelectComponent
+      },
+      {
+        title: 'Selected first item',
+        anchor: 'selected-first-item',
+        description: `
+          <p>Use <code>typeaheadSelectedFirstItem</code> property to make first item in option list is chosen by default.</p>
+        `,
+        component: require('!!raw-loader?lang=typescript!./demos/selected-first-item/selected-first-item.ts'),
+        html: require('!!raw-loader?lang=markup!./demos/selected-first-item/selected-first-item.html'),
+        outlet: DemoTypeaheadSelectedFirstItemComponent
       }
     ]
   },

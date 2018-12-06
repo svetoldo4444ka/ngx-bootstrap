@@ -1,3 +1,4 @@
+/* tslint:disable:max-file-line-count */
 import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
@@ -17,16 +18,16 @@ interface State {
     <input [(ngModel)]="selectedState"
            [typeahead]="states"
            [typeaheadOptionField]="'name'"
-           (typeaheadOnBlur)="onBlurEvent($event)">
-  `
+           (typeaheadOnBlur)="onBlurEvent($event)">`
 })
 class TestTypeaheadComponent {
   selectedState: string;
   states: State[] = [
     {id: 1, name: 'Alabama', region: 'South'},
-    {id: 2, name: 'Alaska', region: 'West'}
+    {id: 2, name: 'Alaska', region: 'West'},
+    {id: 3, name: 'Arizona', region: 'West'},
+    {id: 4, name: 'Arkansas', region: 'South'}
   ];
-
   onBlurEvent(activeItem) { return undefined; }
 }
 
@@ -38,12 +39,11 @@ describe('Directive: Typeahead', () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      declarations: [TestTypeaheadComponent],
+      declarations: [ TestTypeaheadComponent],
       imports: [TypeaheadModule.forRoot(), FormsModule]
     }).createComponent(TestTypeaheadComponent);
 
     fixture.detectChanges();
-
     component = fixture.componentInstance;
     inputElement = fixture.debugElement.query(By.css('input'))
       .nativeElement as HTMLInputElement;
@@ -71,16 +71,33 @@ describe('Directive: Typeahead', () => {
       expect(directive.typeaheadMinLength).toBe(1);
     });
 
-    it('should set a default value for typeaheadWaitMs', () => {
-      expect(directive.typeaheadWaitMs).toBe(0);
+    it('should get a value for typeaheadMinLength if user added it', () => {
+      directive.typeaheadMinLength = 4;
+
+      directive.ngOnInit();
+
+      expect(directive.typeaheadMinLength).toBe(4);
     });
 
     it('should set a default value for typeaheadAsync', () => {
       expect(directive.typeaheadAsync).toBeFalsy();
     });
 
+    it('should not set the container reference', () => {
+      expect(directive._container).toBeFalsy();
+    });
+
+    it('should set a default value for typeaheadWaitMs', () => {
+      expect(directive.typeaheadWaitMs).toBe(0);
+    });
+
+    it('should set a default value for typeaheadSelectedFirstItem', () => {
+      expect(directive.typeaheadSelectedFirstItem).toBeTruthy();
+    });
+
     it('should typeaheadAsync to false, if typeahead is an observable', () => {
       directive.typeahead = of(component.states);
+
       directive.ngOnInit();
 
       expect(directive.typeaheadAsync).toBeTruthy();
@@ -93,84 +110,95 @@ describe('Directive: Typeahead', () => {
 
       expect(typeaheadContainer).toBeNull();
     });
-
-    it('should not set the container reference', () => {
-      expect(directive._container).toBeFalsy();
-    });
   });
 
-  describe('onChange', () => {
-    beforeEach(
-      fakeAsync(() => {
-        inputElement.value = 'Ala';
-        fireEvent(inputElement, 'input');
+  describe('onInput', () => {
+    it('should be called show method', fakeAsync(() => {
+        inputElement.value = 'a';
+        inputElement.dispatchEvent(new Event('input'));
+        tick();
 
-        fixture.detectChanges();
-        tick(100);
+        expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
       })
     );
 
-    it('should render the typeahead-container child element', () => {
-      const typeaheadContainer = fixture.debugElement.nativeElement.querySelector(
-        'typeahead-container'
+    it('and dropup equal true should be called show method', fakeAsync(() => {
+        directive.dropup = true;
+        inputElement.value = 'al';
+        inputElement.dispatchEvent(new Event('input'));
+        tick();
+
+        expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+      })
+    );
+
+    it('if value was changed to invalid should be called hide method', fakeAsync(() => {
+        inputElement.value = 'al';
+        inputElement.dispatchEvent(new Event('input'));
+        tick();
+
+        inputElement.value = ' ';
+        inputElement.dispatchEvent(new Event('input'));
+        tick();
+
+        expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+      })
+    );
+
+    it('if value equal 0 should be called hide method', fakeAsync(() => {
+        inputElement.value = ' ';
+        inputElement.dispatchEvent(new Event('input'));
+        tick();
+
+        expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+      })
+    );
+
+    it('if click event triggers on outside element should be called onOutsideClick method',
+      fakeAsync(() => {
+        inputElement.value = 'al';
+        inputElement.dispatchEvent(new Event('input'));
+        tick();
+
+        inputElement.value = ' ';
+        document.dispatchEvent(new Event('click'));
+        tick();
+
+        expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+      })
+    );
+  });
+
+  describe('onFocus', () => {
+    it('should work if typeaheadMinLength equal 0', fakeAsync(() => {
+      directive.typeaheadMinLength = 0;
+      inputElement.dispatchEvent(new Event('click'));
+      tick();
+
+      document.dispatchEvent(new Event('click'));
+      tick();
+
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+    }));
+
+    it('should not work if typeaheadMinLength equal 0', fakeAsync(() => {
+      inputElement.dispatchEvent(new Event('click'));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+  });
+
+  describe('changeModel tests', () => {
+    it('should set the selectedState value', () => {
+      directive.changeModel(
+        new TypeaheadMatch(
+          {id: 1, name: 'Alabama', region: 'South'},
+          'Alabama'
+        )
       );
-      expect(typeaheadContainer).not.toBeNull();
+      expect(component.selectedState).toBe('Alabama');
     });
-
-    it('should set the container reference', () => {
-      expect(directive._container).toBeTruthy();
-    });
-
-    it(
-      'should result in a total of 2 matches, when "Ala" is entered',
-      fakeAsync(() => {
-        expect(directive.matches.length).toBe(2);
-      })
-    );
-
-    it(
-      'should result in 2 item matches, when "Ala" is entered',
-      fakeAsync(() => {
-        expect(directive.matches).toContain(
-          new TypeaheadMatch(
-            {id: 1, name: 'Alabama', region: 'South'},
-            'Alabama'
-          )
-        );
-        expect(directive.matches).toContain(
-          new TypeaheadMatch(
-            {id: 2, name: 'Alaska', region: 'West'},
-            'Alaska'
-          )
-        );
-      })
-    );
-
-    it(
-      'should result in 0 matches, when input does not match',
-      fakeAsync(() => {
-        inputElement.value = 'foo';
-        fireEvent(inputElement, 'input');
-
-        fixture.detectChanges();
-        tick(100);
-
-        expect(directive.matches.length).toBe(0);
-      })
-    );
-
-    it(
-      'should not display null item',
-      fakeAsync(() => {
-        component.states.push({id: 3, name: null, region: 'West'});
-        inputElement.value = 'Ala';
-        fireEvent(inputElement, 'input');
-        fixture.detectChanges();
-        tick(100);
-
-        expect(directive.matches.length).toBe(2);
-      })
-    );
   });
 
   describe('onChange grouped', () => {
@@ -223,23 +251,25 @@ describe('Directive: Typeahead', () => {
     );
   });
 
-  describe('changeModel', () => {
-    it('should set the selectedState value', () => {
-      directive.changeModel(
-        new TypeaheadMatch(
-          {id: 1, name: 'Alabama', region: 'South'},
-          'Alabama'
-        )
-      );
+  describe('onBlur', () => {
+    it('blur event should send the correct active item', fakeAsync(() => {
+      inputElement.value = 'Alab';
+      inputElement.dispatchEvent(new Event('input'));
+      tick();
 
-      expect(component.selectedState).toBe('Alabama');
-    });
+      spyOn(fixture.componentInstance, 'onBlurEvent').and.callFake(param => {
+        expect(param.item.id).toBe(1);
+      });
+      directive.onBlur();
+      expect(directive._container.isFocused).toBeFalsy();
+      fixture.detectChanges();
+    }));
   });
 
-  describe('onBlur', () => {
+  describe('onChange', () => {
     beforeEach(
       fakeAsync(() => {
-        inputElement.value = 'Alab';
+        inputElement.value = 'Ala';
         fireEvent(inputElement, 'input');
 
         fixture.detectChanges();
@@ -247,12 +277,182 @@ describe('Directive: Typeahead', () => {
       })
     );
 
-    it('blur event should send the correct active item', () => {
-      spyOn(fixture.componentInstance, 'onBlurEvent').and.callFake(param => {
-        expect(param.item.id).toBe(1);
-      });
-      directive.onBlur();
-      fixture.detectChanges();
+    it('should render the typeahead-container child element', () => {
+      const typeaheadContainer = fixture.debugElement.nativeElement.querySelector(
+        'typeahead-container'
+      );
+      expect(typeaheadContainer).not.toBeNull();
     });
+
+    it('should set the container reference', () => {
+      expect(directive._container).toBeTruthy();
+    });
+
+    it('should result in a total of 2 matches, when "Ala" is entered', fakeAsync(() => {
+        expect(directive.matches.length).toBe(2);
+      })
+    );
+
+    it('should result in 2 item matches, when "Ala" is entered', fakeAsync(() => {
+        expect(directive.matches).toContain(
+          new TypeaheadMatch(
+            {id: 1, name: 'Alabama', region: 'South'},
+            'Alabama'
+          )
+        );
+        expect(directive.matches).toContain(
+          new TypeaheadMatch(
+            {id: 2, name: 'Alaska', region: 'West'},
+            'Alaska'
+          )
+        );
+      })
+    );
+
+    it('should result in 0 matches, when input does not match', fakeAsync(() => {
+        inputElement.value = 'foo';
+        fireEvent(inputElement, 'input');
+        fixture.detectChanges();
+        tick(100);
+
+        expect(directive.matches.length).toBe(0);
+      })
+    );
+
+    it('should not display null item', fakeAsync(() => {
+        component.states.push({id: 3, name: null, region: 'West'});
+        inputElement.value = 'Ala';
+        fireEvent(inputElement, 'input');
+        fixture.detectChanges();
+        tick(100);
+
+        expect(directive.matches.length).toBe(2);
+      })
+    );
+
+    it('should be triggered hide method if esc was clicked', fakeAsync(() => {
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 27} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should be triggered hide method if enter was clicked', fakeAsync(() => {
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 13} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should not be triggered prevActiveMatch method if up was clicked', fakeAsync(() => {
+      inputElement.value = ' ';
+      inputElement.dispatchEvent(new Event('input'));
+      tick();
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 38} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should be triggered prevActiveMatch method if up was clicked', fakeAsync(() => {
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 38} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+    }));
+
+    it('should not be triggered nextActiveMatch method if down was clicked', fakeAsync(() => {
+      inputElement.value = ' ';
+      inputElement.dispatchEvent(new Event('input'));
+      tick();
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 40} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should be triggered nextActiveMatch method if down was clicked', fakeAsync(() => {
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keyup', {keyCode: 40} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+    }));
+
+    it('should not close typeahead container if Ctrl was clicked', fakeAsync(() => {
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keydown', {keyCode: 45} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+    }));
+  });
+
+  describe('onKeydown', () => {
+    beforeEach(
+      fakeAsync(() => {
+        inputElement.value = 'Ala';
+        fireEvent(inputElement, 'input');
+        fixture.detectChanges();
+        tick(100);
+      })
+    );
+
+    it('should not be triggered show method', fakeAsync(() => {
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keydown', {keyCode: 9} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should not be triggered hide method', fakeAsync(() => {
+      inputElement.value = ' ';
+      inputElement.dispatchEvent(new Event('input'));
+      tick();
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keydown', {keyCode: 9} as {[key: string]: number}));
+      tick();
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should close container if Enter was clicked', fakeAsync(() => {
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keydown', {keyCode: 13} as {[key: string]: number}));
+      tick();
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
+
+    it('should not close typeahead container if Ctrl was clicked', fakeAsync(() => {
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keydown', {key: 'Insert'}));
+      tick();
+
+      expect(fixture.nativeElement.querySelector('.dropdown').classList).toContain('open');
+    }));
+
+    it('should close typeahead container if Tab was clicked', fakeAsync(() => {
+      inputElement.value = ' ';
+      inputElement.dispatchEvent(new Event('input'));
+      tick();
+
+      directive.typeaheadSelectedFirstItem = false;
+      inputElement.value = 'Alab';
+      inputElement.dispatchEvent(new Event('input'));
+      tick();
+      /* tslint:disable:no-object-literal-type-assertion */
+      inputElement.dispatchEvent(new KeyboardEvent('keydown', {keyCode: 9} as {[key: string]: number}));
+      tick();
+
+      expect(fixture.debugElement.query(By.css('typeahead-container'))).toBeNull();
+    }));
   });
 });

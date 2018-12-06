@@ -83,6 +83,11 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   @Input() typeaheadScrollable = false;
   /** specifies number of options to show in scroll view  */
   @Input() typeaheadOptionsInScrollableView = 5;
+  /** fired when an options list was opened and the user clicked Tab
+   * If a value equal true, it will be chosen first or active item in the list
+   * If value equal false, it will be chosen an active item in the list or nothing
+   */
+  @Input() typeaheadSelectedFirstItem = true;
   /** fired when 'busy' state of this component was changed,
    * fired on async mode only, returns boolean
    */
@@ -93,8 +98,8 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
   @Output() typeaheadNoResults = new EventEmitter<boolean>();
   /** fired when option was selected, return object with data of this option */
   @Output() typeaheadOnSelect = new EventEmitter<TypeaheadMatch>();
-  /** fired when blur event occurres. returns the active item */
-    // tslint:disable-next-line:no-any
+  /** fired when blur event occurs. returns the active item */
+  // tslint:disable-next-line:no-any
   @Output() typeaheadOnBlur = new EventEmitter<any>();
 
   /**
@@ -251,7 +256,12 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
     }
 
     // if an item is visible - prevent form submission
+<<<<<<< HEAD
     if (e.keyCode === 13) {
+=======
+    /* tslint:disable-next-line: deprecation */
+    if (this._container.active && e.keyCode === 13) {
+>>>>>>> 84e3eed... fix(typeahead): was restored lost commit
       e.preventDefault();
 
       return;
@@ -259,10 +269,13 @@ export class TypeaheadDirective implements OnInit, OnDestroy {
 
     // if an item is visible - don't change focus
     if (e.keyCode === 9) {
-      e.preventDefault();
-      this._container.selectActiveMatch();
+      if (this._container.active || this.typeaheadSelectedFirstItem) {
+        e.preventDefault();
+        this._container.selectActiveMatch(this.typeaheadSelectedFirstItem);
 
-      return;
+        return;
+      }
+      this.hide();
     }
   }
 
